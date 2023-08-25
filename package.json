@@ -1,0 +1,33 @@
+{
+  "name": "@slashtags/slashauth-client",
+  "version": "0.0.1",
+  "description": "client for slashtags authentication",
+  "main": "index.js",
+  "scripts": {
+    "test": "brittle test/**/*.test.js --coverage --bailbrittle test/**/*.test.js --coverage --bail"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/slashtags/slashauth-client.git"
+  },
+  "keywords": [
+    "slashtags",
+    "auth",
+    "client"
+  ],
+  "author": "dzdidi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/slashtags/slashauth-client/issues"
+  },
+  "homepage": "https://github.com/slashtags/slashauth-client#readme",
+  "devDependencies": {
+    "brittle": "^3.3.2",
+    "node-fetch": "^3.3.2",
+    "sodium-universal": "^4.0.0",
+    "standard": "^17.1.0"
+  },
+  "dependencies": {
+    "b4a": "^1.6.4"
+  }
+}
