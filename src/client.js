@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const { createToken } = require('./crypto')
 
 const headers = {
   'Content-Type': 'application/json'
@@ -65,21 +66,10 @@ class SlashAuthClient {
     if (!url) throw new Error('No url')
 
     const parsed = new URL(url)
-    const res = await fetch(url, {
-      headers,
-      method: 'POST',
-      body: JSON.stringify({
-        method: 'authz',
-        params: {
-          publicKey: this.keypair.publicKey.toString('hex'),
-          token: parsed.searchParams.get('token'),
-          signature: this.sv.sign(parsed.searchParams.get('token'), this.keypair.secretKey)
-        }
-      })
-    })
-    const body = await res.json()
+    const token = parsed.searchParams.get('token')
+    const params = this.createRequestParams({ token })
 
-    return this.processResponse(body)
+    return this.sendRequest('authz', url, params)
   }
 
   /**
@@ -96,21 +86,9 @@ class SlashAuthClient {
     if (!url) throw new Error('No url')
 
     const { token } = await this.requestToken(url)
-    const res = await fetch(url, {
-      headers,
-      method: 'POST',
-      body: JSON.stringify({
-        method: 'magiclink',
-        params: {
-          publicKey: this.keypair.publicKey.toString('hex'),
-          signature: this.sv.sign(token, this.keypair.secretKey),
-          token
-        }
-      })
-    })
-    const body = await res.json()
+    const params = this.createRequestParams({ token })
 
-    return this.processResponse(body)
+    return this.sendRequest('magiclink', url, params)
   }
 
   /**
@@ -126,26 +104,17 @@ class SlashAuthClient {
   async requestToken (url) {
     if (!url) throw new Error('No url')
 
-    const res = await fetch(url, {
-      headers,
-      method: 'POST',
-      body: JSON.stringify({
-        method: 'requestToken',
-        params: {
-          publicKey: this.keypair.publicKey.toString('hex'),
-          signature: this.sv.sign(this.keypair.publicKey.toString('hex'), this.keypair.secretKey)
-        }
-      })
+    const params = this.createRequestParams({
+      publicKey: this.keypair.publicKey.toString('hex')
     })
 
-    const body = await res.json()
-
-    return this.processResponse(body)
+    return this.sendRequest('requestToken', url, params)
   }
 
   /**
    * Process response
    * @param {object} body
+   * @param {string} nonce
    * @returns {object}
    * @throws {Error} Invalid signature
    * @throws {Error} Invalid token
@@ -153,10 +122,11 @@ class SlashAuthClient {
    * @throws {Error} No result in response
    * @throws {Error} No url
    */
-  processResponse (body) {
+  processResponse (body, nonce) {
     if (body.error) throw new Error(body.error.message)
     if (!body.result.signature) throw new Error('No signature in response')
     if (!body.result.result) throw new Error('No result in response')
+    if (body.result.result.nonce !== nonce) throw new Error('Invalid nonce')
 
     this.sv.verify(
       body.result.signature,
@@ -165,6 +135,41 @@ class SlashAuthClient {
     )
 
     return body.result.result
+  }
+
+  /**
+   * Send request to server
+   * @param {string} method
+   * @param {string} url
+   * @param {object} params
+   * @returns {object} response
+   */
+  async sendRequest (method, url, params) {
+    const res = await fetch(url, {
+      headers,
+      method: 'POST',
+      body: JSON.stringify({ method, params })
+    })
+    const body = await res.json()
+
+    return this.processResponse(body, params.nonce)
+  }
+
+  /**
+   * Create request params
+   * @param {object} param
+   * @returns {object}
+   */
+  createRequestParams (param = {}) {
+    const nonce = createToken()
+    const data = Object.values(param)[0]
+    const signature = this.sv.sign(`${nonce}:${data}`, this.keypair.secretKey)
+    return {
+      ...param,
+      nonce,
+      publicKey: this.keypair.publicKey.toString('hex'),
+      signature
+    }
   }
 }
 

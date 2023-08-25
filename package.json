@@ -4,7 +4,8 @@
   "description": "client for slashtags authentication",
   "main": "index.js",
   "scripts": {
-    "test": "brittle test/**/*.test.js --coverage --bailbrittle test/**/*.test.js --coverage --bail"
+    "test": "brittle test/**/*.test.js --coverage --bailbrittle test/**/*.test.js --coverage --bail",
+    "lint": "standard --fix"
   },
   "repository": {
     "type": "git",
@@ -25,7 +26,8 @@
     "brittle": "^3.3.2",
     "node-fetch": "^3.3.2",
     "sodium-universal": "^4.0.0",
-    "standard": "^17.1.0"
+    "standard": "^17.1.0",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
     "b4a": "^1.6.4"
