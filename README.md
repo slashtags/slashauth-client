@@ -59,7 +59,10 @@ const magiclink = (publicKey) => {
     authz,
     magiclink,
     keypair
-    // sv - object with sign(data, secretKey) and verify(signature, data, publicKey) methods
+    // sv - object with methods:
+    //   - sign(data, secretKey): string
+    //   - verify(signature, data, publicKey): void
+    //   - createToken(): string
     // storage - storage for <pK>: <nonce> pairs with methods (default Map)
     //    - async set(publicKey, token)
     //    - async get(publicKey)

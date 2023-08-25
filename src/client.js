@@ -1,5 +1,4 @@
 const fetch = require('node-fetch')
-const { createToken } = require('./crypto')
 
 const headers = {
   'Content-Type': 'application/json'
@@ -27,6 +26,14 @@ const sv = {
     if (require('./crypto').verify(signature, data, publicKey)) return
 
     throw new Error('Invalid signature')
+  },
+
+  /**
+   * Generate token
+   * @returns {string}
+   */
+  createToken: function () {
+    return require('./crypto').createToken()
   }
 }
 
@@ -40,6 +47,7 @@ const sv = {
  * @param {object} opts.sv
  * @param {function} opts.sv.sign - sign function
  * @param {function} opts.sv.verify - verify function
+ * @param {function} opts.sv.createToken - createToken function
  * @returns {object}
  */
 class SlashAuthClient {
@@ -161,7 +169,7 @@ class SlashAuthClient {
    * @returns {object}
    */
   createRequestParams (param = {}) {
-    const nonce = createToken()
+    const nonce = this.sv.createToken()
     const data = Object.values(param)[0]
     const signature = this.sv.sign(`${nonce}:${data}`, this.keypair.secretKey)
     return {
