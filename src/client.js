@@ -1,4 +1,5 @@
 const fetch = require('node-fetch')
+const SlashtagsURL = require('@synonymdev/slashtags-url')
 
 const headers = {
   'Content-Type': 'application/json'
@@ -153,7 +154,9 @@ class SlashAuthClient {
    * @returns {object} response
    */
   async sendRequest (method, url, params) {
-    const res = await fetch(url, {
+    const parsed = SlashtagsURL.parse(url)
+
+    const res = await fetch(parsed.query.relay + parsed.path, {
       headers,
       method: 'POST',
       body: JSON.stringify({ method, params })
