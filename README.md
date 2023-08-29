@@ -13,10 +13,8 @@ npm install @slashtags/slashauth-client
 See https://github.com/slashtags/slashauth-client
 
 ```js
-const { AuthClient, crypto } = require('@slashtags/slashauth-client')
+const { AuthClient } = require('@slashtags/slashauth-client')
 
-// create keyPair
-const keyPair = crypto.createKeyPair()
 // use authServer's publicKey for pinning
 const client = new AuthClient({ keyPair, remotePublicKey })
 
@@ -34,12 +32,9 @@ const link = await client.magiclik(slashauthURL)
 See https://github.com/slashtags/slashauth
 
 ```js
-const { AuthServer, crypto } = require('@slashtags/slashauth')
+const { AuthServer } = require('@slashtags/slashauth')
 
-// create keyPair
-const keyPair = crypto.createKeyPair()
-
-const authz = ({ publicKey, token, signature }) => {
+const authz = ({ publicKey, token }) => {
   // NOTE: by the moment this method will be called signature will alreayd be verified
   return {
     status: 'ok',
@@ -47,7 +42,7 @@ const authz = ({ publicKey, token, signature }) => {
   }
 }
 
-const magiclink = (publicKey) => {
+const magiclink = ({ publicKey }) => {
   // NOTE: by the moment this method will be called signature will alreayd be verified
   return {
     status: 'ok',
@@ -59,14 +54,6 @@ const magiclink = (publicKey) => {
     authz,
     magiclink,
     keypair
-    // sv - object with methods:
-    //   - sign(data, secretKey): string
-    //   - verify(signature, data, publicKey): void
-    //   - createToken(): string
-    // storage - storage for <pK>: <nonce> pairs with methods (default Map)
-    //    - async set(publicKey, token)
-    //    - async get(publicKey)
-    //    - async delete(publicKey)
     // port - to run server on (default 8000)
     // host - to run server on (default localhost)
     // route - route for auth (default auth)

@@ -30,6 +30,6 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "b4a": "^1.6.4"
+    "slashtags-request": "github:slashtags/rpc-request"
   }
 }
