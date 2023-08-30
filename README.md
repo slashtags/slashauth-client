@@ -13,10 +13,10 @@ npm install @slashtags/slashauth-client
 See https://github.com/slashtags/slashauth-client
 
 ```js
-const { AuthClient } = require('@slashtags/slashauth-client')
+const { SlashAuthClient } = require('@slashtags/slashauth-client')
 
 // use authServer's publicKey for pinning
-const client = new AuthClient({ keyPair, remotePublicKey })
+const client = new SlashAuthClient({ keypair })
 
 const response = await client.authz(slashauthURL)
 // { status: 'ok', token: 'Bearer 123' }
@@ -32,7 +32,7 @@ const link = await client.magiclik(slashauthURL)
 See https://github.com/slashtags/slashauth
 
 ```js
-const { AuthServer } = require('@slashtags/slashauth')
+const { SlashAuthServer } = require('@slashtags/slashauth')
 
 const authz = ({ publicKey, token }) => {
   // NOTE: by the moment this method will be called signature will alreayd be verified
