@@ -1,4 +1,4 @@
-# slashtags-auth
+# slashtags-auth-client
 
 ## Installation
 
@@ -8,13 +8,12 @@ npm install @slashtags/slashauth-client
 
 ## Usage
 
-#### Client side
-
-See https://github.com/slashtags/slashauth-client
 
 ```js
 const { SlashAuthClient } = require('@slashtags/slashauth-client')
+cosnt { generateKeyPair } = require('noise-curve-ed')
 
+const keypair = generateKeyPair()
 // use authServer's publicKey for pinning
 const client = new SlashAuthClient({ keypair })
 
@@ -26,42 +25,4 @@ const link = await client.magiclik(slashauthURL)
 
 ```
 
-
-#### Server side
-
-See https://github.com/slashtags/slashauth
-
-```js
-const { SlashAuthServer } = require('@slashtags/slashauth')
-
-const authz = ({ publicKey, token }) => {
-  // NOTE: by the moment this method will be called signature will alreayd be verified
-  return {
-    status: 'ok',
-    token: 'Bearer 123'
-  }
-}
-
-const magiclink = ({ publicKey }) => {
-  // NOTE: by the moment this method will be called signature will alreayd be verified
-  return {
-    status: 'ok',
-    ml: 'http://localhost:8000/v0.1/users/123'
-  }
-}
-
-  const server = new SlashAuthServer({
-    authz,
-    magiclink,
-    keypair
-    // port - to run server on (default 8000)
-    // host - to run server on (default localhost)
-    // route - route for auth (default auth)
-    // version - version of auth (default v0.1)
-  })
-
-  await server.start()
-
-const slashauthURL = server.fromatURL(token)
-
-```
+See https://github.com/slashtags/slashauth for server side implementation
